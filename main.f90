@@ -18,7 +18,7 @@ program pass_gen
 
     type(pass_struct) :: pass
     real(real64) :: random
-    integer :: i, a, ind
+    integer :: i, a, ind, j, k, csv_protection
     character(*), parameter :: dictionary = &
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0000111122223333444455556666777788889999!"#$%&()*+,-./:;<=>?@[\]^_`{|}~'
     character(*), parameter :: special = ',;'
@@ -33,11 +33,18 @@ program pass_gen
     allocate(pass%password(pass%order))
     
     a = len(dictionary)
-
     do i=1,pass%order
         call random_number(random)
         ind = 1+floor(a*random)
         pass%password(i) = dictionary(ind:ind)
+    enddo
+
+    csv_protection = floor(real(pass%order)/10)
+    do i=1,csv_protection
+        call random_number(random)
+        j = 1 + floor(pass%order*random)
+        k = 1 + floor(len(special)*random)
+        pass%password(j) = special(k:k)
     enddo
 
     print*, pass%password
