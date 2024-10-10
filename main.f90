@@ -3,7 +3,7 @@ module data_type
     public
 
     type :: pass_struct
-        character(len=40) :: service, user
+        character(len=100) :: service, user, save_file
         character, allocatable :: password(:)
         integer :: order
         logical :: output = .true.
@@ -20,8 +20,8 @@ program pass_gen
     real(real64) :: random
     integer :: i, a, ind, j, k, csv_protection
     character(*), parameter :: dictionary = &
-    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0000111122223333444455556666777788889999!"#$%&()*+,-./:;<=>?@[\]^_`{|}~'
-    character(*), parameter :: special = ',;'
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0000111122223333444455556666777788889999!"#$%&()*+-./:<=>?@[\]^_`{|}~'
+    character(*), parameter :: special = ',;', file_extension = '.txt'
 
     print*, 'Type the service name:'
     read*, pass%service
@@ -47,6 +47,14 @@ program pass_gen
         pass%password(j) = special(k:k)
     enddo
 
-    print*, pass%password
+    print*, 'The password is:', pass%password 
 
+    pass%save_file = trim(trim(pass%service)//file_extension)
+    open(10, file = pass%save_file)
+    write(10,*) 'Service: ', pass%service
+    write(10,*) 'User: ', pass%user
+    write(10,*) 'Password: ', pass%password
+    
+    print*, 'Press ENTER to exit'
+    read*, 
 end program pass_gen
